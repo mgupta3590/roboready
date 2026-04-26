@@ -1,0 +1,1826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROBO-READY · Foundation Robotic Bedside Assistant Course</title>
+<style>
+:root {
+  --navy: #0a1628;
+  --navy2: #112240;
+  --blue: #1a5cad;
+  --blue-light: #e8f0fb;
+  --teal: #0f7056;
+  --teal-light: #e1f5ee;
+  --gold: #c9922a;
+  --gold-light: #fdf3e1;
+  --red: #b91c1c;
+  --red-light: #fef2f2;
+  --border: rgba(255,255,255,0.1);
+  --border-dark: rgba(0,0,0,0.1);
+  --text: #111827;
+  --muted: #6b7280;
+  --surface: #ffffff;
+  --bg: #f4f6fa;
+  --font-serif: 'Georgia', 'Times New Roman', serif;
+  --font: -apple-system, 'Segoe UI', sans-serif;
+  --r: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); min-height: 100vh; }
+
+/* ── VIEWS ── */
+.view { display: none; min-height: 100vh; }
+.view.active { display: block; }
+
+/* ── SHARED HEADER ── */
+.site-header {
+  background: var(--navy);
+  padding: 0 2rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.brand {
+  font-family: var(--font-serif);
+  color: #fff;
+  font-size: 15px;
+  letter-spacing: 0.12em;
+  display: flex; align-items: center; gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.brand-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+.nav-links { display: flex; gap: 6px; }
+.nav-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all .15s;
+}
+.nav-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+.nav-btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+.nav-btn.primary:hover { opacity: .88; }
+
+/* ── HOME ── */
+.home-hero {
+  background: var(--navy);
+  padding: 5rem 2rem 4rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 60% 40%, rgba(26,92,173,.18) 0%, transparent 70%);
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(201,146,42,.15);
+  border: 1px solid rgba(201,146,42,.3);
+  color: #e8b84b;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  color: #fff;
+  font-weight: normal;
+  letter-spacing: 0.06em;
+  margin-bottom: .5rem;
+  position: relative;
+}
+.hero-subtitle {
+  color: rgba(255,255,255,.55);
+  font-size: 15px;
+  margin-bottom: 3rem;
+  position: relative;
+  letter-spacing: 0.02em;
+}
+.hero-cards {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.hero-card {
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: var(--r);
+  padding: 2rem 1.5rem;
+  flex: 1;
+  min-width: 240px;
+  max-width: 300px;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.hero-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--blue);
+  transform: scaleX(0);
+  transition: transform .2s;
+}
+.hero-card:hover { background: rgba(255,255,255,.1); transform: translateY(-2px); }
+.hero-card:hover::after { transform: scaleX(1); }
+.hero-card.green::after { background: var(--teal); }
+.card-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 20px;
+}
+.card-icon.blue { background: rgba(26,92,173,.25); }
+.card-icon.green { background: rgba(15,112,86,.25); }
+.hero-card h3 { color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.hero-card p { color: rgba(255,255,255,.5); font-size: 13px; line-height: 1.5; margin-bottom: 1.25rem; }
+.card-meta { display: flex; gap: 10px; flex-wrap: wrap; }
+.tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.tag.blue { background: rgba(26,92,173,.3); color: #90b8f0; }
+.tag.green { background: rgba(15,112,86,.3); color: #5ecba8; }
+.home-info {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 0 2rem;
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.info-tile {
+  flex: 1; min-width: 140px;
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 1rem 1.25rem;
+  text-align: center;
+}
+.info-num { font-size: 28px; font-weight: 700; color: var(--blue); }
+.info-label { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.home-footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--border-dark);
+  margin-top: 1rem;
+}
+
+/* ── ASSESSMENT ── */
+.assess-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.assess-hero {
+  background: var(--navy);
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.assess-hero h1 {
+  font-family: var(--font-serif);
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: normal;
+  margin-bottom: .3rem;
+}
+.assess-hero p { color: rgba(255,255,255,.55); font-size: 14px; }
+.assess-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 1.5rem;
+}
+.assess-stat { text-align: center; }
+.assess-stat .num { font-size: 24px; font-weight: 700; color: #fff; }
+.assess-stat .lbl { font-size: 11px; color: rgba(255,255,255,.45); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+.start-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 2rem;
+  text-align: center;
+}
+.start-card p { color: var(--muted); font-size: 14px; line-height: 1.7; max-width: 460px; margin: 0 auto 1.5rem; }
+
+/* name/email capture */
+.capture-fields {
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 380px; margin: 0 auto 1.5rem;
+}
+.capture-fields input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+}
+.capture-fields input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,92,173,.08); }
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 11px 28px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  transition: all .15s;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { opacity: .88; }
+.btn-teal { background: var(--teal); color: #fff; }
+.btn-teal:hover { opacity: .88; }
+.btn-outline {
+  background: transparent;
+  border: 1px solid #d1d5db;
+  color: var(--text);
+}
+.btn-outline:hover { background: var(--bg); }
+.btn-red { background: var(--red); color: #fff; }
+
+/* quiz */
+.quiz-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 2rem;
+  display: none;
+}
+.quiz-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.q-counter { font-size: 13px; color: var(--muted); }
+.q-counter strong { color: var(--text); }
+.timer {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background: var(--blue-light);
+  color: var(--blue);
+}
+.timer.warn { background: #fff7ed; color: #c2410c; }
+
+.progress-bar {
+  height: 4px; background: #e5e7eb;
+  border-radius: 2px; margin-bottom: 1.5rem; overflow: hidden;
+}
+.progress-fill {
+  height: 100%; background: var(--blue);
+  border-radius: 2px;
+  transition: width .3s ease;
+}
+
+.q-text { font-size: 16px; font-weight: 500; color: var(--text); margin-bottom: 1.25rem; line-height: 1.5; }
+.options { display: flex; flex-direction: column; gap: 8px; }
+.option {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 11px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all .15s;
+  font-size: 14px;
+  line-height: 1.4;
+}
+.option:hover { border-color: var(--blue); background: var(--blue-light); }
+.option.selected { border-color: var(--blue); background: var(--blue-light); }
+.option.correct { border-color: var(--teal); background: var(--teal-light); }
+.option.wrong { border-color: var(--red); background: var(--red-light); }
+.option-letter {
+  min-width: 24px; height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 600;
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.option.selected .option-letter { background: var(--blue); border-color: var(--blue); color: #fff; }
+.option.correct .option-letter { background: var(--teal); border-color: var(--teal); color: #fff; }
+.option.wrong .option-letter { background: var(--red); border-color: var(--red); color: #fff; }
+
+.quiz-nav {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 1.5rem; padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* results */
+.results-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 2rem;
+  display: none;
+  text-align: center;
+}
+.score-ring {
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-weight: 700;
+}
+.score-ring.pass { background: var(--teal-light); border: 4px solid var(--teal); }
+.score-ring.fail { background: var(--red-light); border: 4px solid var(--red); }
+.score-ring .big { font-size: 28px; }
+.score-ring .small { font-size: 12px; color: var(--muted); }
+.result-badge {
+  display: inline-block;
+  padding: 5px 16px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+  margin-bottom: 1rem;
+}
+.result-badge.pass { background: var(--teal-light); color: var(--teal); }
+.result-badge.fail { background: var(--red-light); color: var(--red); }
+.review-list { text-align: left; margin-top: 1.5rem; }
+.review-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+.review-item .q { font-weight: 500; margin-bottom: 6px; }
+.review-item .given { color: var(--red); }
+.review-item .correct-ans { color: var(--teal); }
+.review-sep { width: 100%; height: 1px; background: #f3f4f6; margin: 4px 0; }
+
+/* ── FEEDBACK ── */
+.fb-wrap { max-width: 640px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.fb-hero {
+  background: var(--navy);
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+.fb-hero h1 { font-family: var(--font-serif); color: #fff; font-size: 1.8rem; font-weight: normal; }
+.fb-hero p { color: rgba(255,255,255,.5); font-size: 13px; margin-top: .4rem; }
+.fb-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 2rem;
+  margin-bottom: 1rem;
+}
+.fb-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 1.25rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.fb-section-title::after {
+  content: ''; flex: 1; height: 1px; background: #e5e7eb;
+}
+.field-label { font-size: 14px; font-weight: 500; color: var(--text); margin-bottom: 6px; }
+.fb-input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text);
+  outline: none;
+  transition: border-color .15s;
+  margin-bottom: 12px;
+}
+.fb-input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,92,173,.08); }
+.fb-textarea { min-height: 80px; resize: vertical; }
+.star-row { display: flex; flex-direction: column; gap: 14px; margin-bottom: 4px; }
+.star-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.star-q { font-size: 14px; color: var(--text); }
+.stars { display: flex; gap: 4px; }
+.star {
+  width: 32px; height: 32px;
+  border: none; background: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #d1d5db;
+  transition: color .1s, transform .1s;
+  line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.star:hover, .star.active { color: #f59e0b; transform: scale(1.15); }
+
+.yn-row { display: flex; flex-direction: column; gap: 12px; margin-bottom: 4px; }
+.yn-item { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+.yn-q { font-size: 14px; color: var(--text); }
+.yn-btns { display: flex; gap: 6px; }
+.yn-btn {
+  padding: 6px 18px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: transparent;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all .15s;
+}
+.yn-btn.yes.active { background: var(--teal-light); border-color: var(--teal); color: var(--teal); }
+.yn-btn.no.active { background: var(--red-light); border-color: var(--red); color: var(--red); }
+.yn-btn:hover { background: var(--bg); }
+
+.select-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 4px; }
+.select-group { flex: 1; min-width: 200px; }
+.fb-select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--surface);
+  outline: none;
+  cursor: pointer;
+}
+.fb-select:focus { border-color: var(--blue); }
+
+.submit-row { text-align: center; margin-top: 1rem; }
+.thankyou {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 3rem 2rem;
+  text-align: center;
+  display: none;
+}
+.ty-icon { font-size: 3rem; margin-bottom: 1rem; }
+.ty-title { font-family: var(--font-serif); font-size: 1.6rem; font-weight: normal; color: var(--text); margin-bottom: .5rem; }
+.ty-sub { color: var(--muted); font-size: 14px; }
+
+/* ── DASHBOARD ── */
+.login-wrap {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--navy);
+}
+.login-card {
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 2.5rem 2rem;
+  width: 360px;
+  text-align: center;
+}
+.login-card h2 {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: normal;
+  margin-bottom: .3rem;
+}
+.login-card p { color: var(--muted); font-size: 13px; margin-bottom: 1.5rem; }
+.login-card input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-family: var(--font);
+  outline: none;
+}
+.login-card input:focus { border-color: var(--blue); }
+.login-error { color: var(--red); font-size: 13px; margin-bottom: 8px; display: none; }
+
+.dash-body { background: var(--bg); min-height: calc(100vh - 60px); padding: 1.5rem; }
+.dash-inner { max-width: 1100px; margin: 0 auto; }
+.dash-top {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem;
+}
+.dash-top h2 { font-size: 18px; font-weight: 600; }
+.dash-actions { display: flex; gap: 8px; align-items: center; }
+.refresh-note { font-size: 12px; color: var(--muted); }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-bottom: 1.25rem;
+}
+.stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  padding: 1rem 1.25rem;
+}
+.stat-tile .n { font-size: 26px; font-weight: 700; color: var(--blue); }
+.stat-tile .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.stat-tile.green .n { color: var(--teal); }
+.stat-tile.gold .n { color: var(--gold); }
+
+.search-bar {
+  display: flex; gap: 8px; margin-bottom: 1rem;
+}
+.search-bar input {
+  flex: 1;
+  padding: 9px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+  outline: none;
+  background: var(--surface);
+}
+.search-bar input:focus { border-color: var(--blue); }
+
+.table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  overflow: hidden;
+}
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th {
+  background: #f8f9fb;
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #f0f0f0;
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #fafbff; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.badge.done { background: var(--teal-light); color: var(--teal); }
+.badge.pending { background: #f3f4f6; color: var(--muted); }
+.badge.pass { background: var(--teal-light); color: var(--teal); }
+.badge.fail { background: var(--red-light); color: var(--red); }
+.badge.cert { background: var(--gold-light); color: var(--gold); }
+
+.action-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  transition: opacity .15s;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.action-btn:hover { opacity: .82; }
+.action-btn.approve { background: var(--teal); color: #fff; }
+.action-btn.revoke { background: #fee2e2; color: var(--red); }
+.action-btn.disabled { background: #f3f4f6; color: #9ca3af; cursor: default; }
+.action-btn.disabled:hover { opacity: 1; }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 1.5rem; right: 1.5rem;
+  background: var(--navy);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all .25s;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ── CERTIFICATE MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 60px rgba(0,0,0,.25);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+.modal-header h3 { font-size: 16px; font-weight: 600; }
+.modal-close {
+  width: 30px; height: 30px;
+  border: none; background: #f3f4f6;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted);
+}
+.modal-close:hover { background: #e5e7eb; }
+.modal-body { padding: 1.5rem; }
+.modal-footer {
+  display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  background: #fafafa;
+  border-radius: 0 0 14px 14px;
+}
+
+/* Certificate preview area */
+.cert-preview {
+  border: 2px dashed #d1d5db;
+  border-radius: 10px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+.cert-preview-inner {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 2rem;
+}
+.cert-blank-msg {
+  text-align: center;
+  color: var(--muted);
+}
+.cert-blank-msg .icon { font-size: 2.5rem; margin-bottom: .75rem; }
+.cert-blank-msg h4 { font-size: 15px; color: #9ca3af; font-weight: 500; margin-bottom: .4rem; }
+.cert-blank-msg p { font-size: 12px; color: #c4c9d4; line-height: 1.5; }
+.cert-participant-info {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  font-size: 13px;
+}
+.cert-info-row { display: flex; justify-content: space-between; padding: 4px 0; }
+.cert-info-row .k { color: var(--muted); }
+.cert-info-row .v { font-weight: 600; color: var(--text); }
+
+/* Template section in dashboard */
+.template-card {
+  background: var(--surface);
+  border: 1px solid var(--border-dark);
+  border-radius: var(--r);
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.template-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .9rem 1.25rem;
+  cursor: pointer;
+  user-select: none;
+  border-bottom: 1px solid transparent;
+  transition: background .15s;
+}
+.template-header:hover { background: #f9fafb; }
+.template-header.open { border-bottom-color: #e5e7eb; }
+.template-header-left { display: flex; align-items: center; gap: 10px; }
+.template-icon {
+  width: 34px; height: 34px;
+  background: var(--gold-light);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.template-title { font-size: 14px; font-weight: 600; }
+.template-subtitle { font-size: 12px; color: var(--muted); }
+.template-chevron { color: var(--muted); font-size: 13px; transition: transform .2s; }
+.template-chevron.open { transform: rotate(180deg); }
+.template-body { padding: 1.25rem; display: none; }
+.template-body.open { display: block; }
+
+.template-placeholder {
+  border: 2px dashed #e5e7eb;
+  border-radius: 10px;
+  min-height: 200px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  background: #fafafa;
+}
+.template-placeholder .big { font-size: 2.5rem; margin-bottom: .75rem; }
+.template-placeholder h4 { font-size: 14px; font-weight: 600; color: #9ca3af; margin-bottom: .4rem; }
+.template-placeholder p { font-size: 12px; color: #c4c9d4; line-height: 1.6; max-width: 300px; }
+.template-hint {
+  background: var(--gold-light);
+  border: 1px solid rgba(201,146,42,.2);
+  border-radius: 8px;
+  padding: .75rem 1rem;
+  font-size: 12px;
+  color: #92680f;
+  margin-top: 1rem;
+  line-height: 1.5;
+}
+
+.action-btn.issue { background: var(--gold); color: #fff; }
+.action-btn.send-email { background: var(--blue); color: #fff; }
+
+@media (max-width: 600px) {
+  .assess-stats { gap: 1rem; }
+  table { font-size: 12px; }
+  th, td { padding: 8px 10px; }
+  .dash-body { padding: 1rem; }
+  .hero-cards { flex-direction: column; align-items: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
+<div class="view active" id="view-home">
+  <header class="site-header">
+    <div class="brand" onclick="showView('home')">
+      <div class="brand-dot"></div>
+      ROBO-READY
+    </div>
+    <nav class="nav-links">
+      <button class="nav-btn" onclick="showView('assess')">Assessment</button>
+      <button class="nav-btn" onclick="showView('feedback')">Feedback</button>
+      <button class="nav-btn primary" onclick="showDashboard()">Admin</button>
+    </nav>
+  </header>
+
+  <div class="home-hero">
+    <div class="hero-badge">✦ Portsmouth Hospitals University NHS Trust</div>
+    <h1 class="hero-title">ROBO-READY</h1>
+    <p class="hero-subtitle">Foundation Robotic Bedside Assistant Course · 22 April 2026</p>
+    <div class="hero-cards">
+      <div class="hero-card" onclick="showView('assess')">
+        <div class="card-icon blue">📋</div>
+        <h3>Safety Assessment</h3>
+        <p>10-question MCQ evaluation of core robotic safety principles. 80% required to pass.</p>
+        <div class="card-meta">
+          <span class="tag blue">10 Questions</span>
+          <span class="tag blue">10 min</span>
+          <span class="tag blue">80% pass</span>
+        </div>
+      </div>
+      <div class="hero-card green" onclick="showView('feedback')">
+        <div class="card-icon green">💬</div>
+        <h3>Course Feedback</h3>
+        <p>Share your experience and help shape future ROBO-READY programmes.</p>
+        <div class="card-meta">
+          <span class="tag green">5 min</span>
+          <span class="tag green">Anonymous optional</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="home-info">
+    <div class="info-tile">
+      <div class="info-num" id="stat-total">0</div>
+      <div class="info-label">Participants</div>
+    </div>
+    <div class="info-tile">
+      <div class="info-num" id="stat-assess">0</div>
+      <div class="info-label">Assessments done</div>
+    </div>
+    <div class="info-tile">
+      <div class="info-num" id="stat-fb">0</div>
+      <div class="info-label">Feedback submitted</div>
+    </div>
+    <div class="info-tile">
+      <div class="info-num" id="stat-cert">0</div>
+      <div class="info-label">Certificates issued</div>
+    </div>
+  </div>
+
+  <div class="home-footer">
+    Foundation Robotic Bedside Assistant Course · Portsmouth Hospitals University NHS Trust
+  </div>
+</div>
+
+<!-- ═══════════════════════ ASSESSMENT ═══════════════════════ -->
+<div class="view" id="view-assess">
+  <header class="site-header">
+    <div class="brand" onclick="showView('home')"><div class="brand-dot"></div>ROBO-READY</div>
+    <nav class="nav-links">
+      <button class="nav-btn" onclick="showView('home')">← Home</button>
+    </nav>
+  </header>
+
+  <div class="assess-hero">
+    <h1>Post-Course Safety Assessment</h1>
+    <p>Foundation Robotic Bedside Assistant Course</p>
+    <div class="assess-stats">
+      <div class="assess-stat"><div class="num">10</div><div class="lbl">Questions</div></div>
+      <div class="assess-stat"><div class="num">10:00</div><div class="lbl">Minutes</div></div>
+      <div class="assess-stat"><div class="num">80%</div><div class="lbl">Pass Mark</div></div>
+    </div>
+  </div>
+
+  <div class="assess-wrap">
+    <!-- Start screen -->
+    <div class="start-card" id="start-screen">
+      <p>This assessment evaluates your understanding of the core safety principles covered during the Robo-Ready course. Answer all questions carefully. You have 10 minutes and require 80% (8/10) to pass.</p>
+      <div class="capture-fields">
+        <input type="text" id="assess-name" placeholder="Full name *" required />
+        <input type="email" id="assess-email" placeholder="Email address *" required />
+      </div>
+      <button class="btn btn-primary" onclick="startAssessment()">Begin Assessment →</button>
+    </div>
+
+    <!-- Quiz -->
+    <div class="quiz-card" id="quiz-screen">
+      <div class="quiz-top">
+        <span class="q-counter">Question <strong id="q-current">1</strong> of <strong>10</strong></span>
+        <span class="timer" id="timer-display">10:00</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="q-progress"></div></div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="options-list"></div>
+      <div class="quiz-nav">
+        <button class="btn btn-outline" id="btn-prev" onclick="prevQ()">← Previous</button>
+        <button class="btn btn-primary" id="btn-next" onclick="nextQ()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="results-card" id="results-screen">
+      <div class="score-ring" id="score-ring">
+        <div class="big" id="score-display"></div>
+        <div class="small">out of 10</div>
+      </div>
+      <div class="result-badge" id="result-badge"></div>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:1.5rem;" id="result-msg"></p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="btn btn-outline" onclick="retakeAssessment()">↺ Retake</button>
+        <button class="btn btn-teal" onclick="showView('feedback')">Complete Feedback →</button>
+      </div>
+      <div class="review-list" id="review-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ FEEDBACK ═══════════════════════ -->
+<div class="view" id="view-feedback">
+  <header class="site-header">
+    <div class="brand" onclick="showView('home')"><div class="brand-dot"></div>ROBO-READY</div>
+    <nav class="nav-links">
+      <button class="nav-btn" onclick="showView('home')">← Home</button>
+    </nav>
+  </header>
+
+  <div class="fb-hero">
+    <h1>Course Feedback</h1>
+    <p>Foundation Robotic Bedside Assistant Course · 22 April 2026</p>
+  </div>
+
+  <div class="fb-wrap">
+    <div id="fb-form-wrap">
+      <!-- Identity -->
+      <div class="fb-card">
+        <div class="fb-section-title">Your details</div>
+        <label class="field-label">Full name</label>
+        <input class="fb-input" type="text" id="fb-name" placeholder="Dr / Mr / Ms …" />
+        <label class="field-label">Email address</label>
+        <input class="fb-input" type="email" id="fb-email" placeholder="nhs.net preferred" />
+      </div>
+
+      <!-- Star ratings -->
+      <div class="fb-card">
+        <div class="fb-section-title">Rate the following</div>
+        <div class="star-row" id="star-section"></div>
+      </div>
+
+      <!-- Yes/No -->
+      <div class="fb-card">
+        <div class="fb-section-title">Quick questions</div>
+        <div class="yn-row">
+          <div class="yn-item">
+            <span class="yn-q">Learning objectives were clear</span>
+            <div class="yn-btns">
+              <button class="yn-btn yes" data-key="objectives" data-val="Yes" onclick="ynSelect(this)">Yes</button>
+              <button class="yn-btn no" data-key="objectives" data-val="No" onclick="ynSelect(this)">No</button>
+            </div>
+          </div>
+          <div class="yn-item">
+            <span class="yn-q">Pacing of the day felt right</span>
+            <div class="yn-btns">
+              <button class="yn-btn yes" data-key="pacing" data-val="Yes" onclick="ynSelect(this)">Yes</button>
+              <button class="yn-btn no" data-key="pacing" data-val="No" onclick="ynSelect(this)">No</button>
+            </div>
+          </div>
+          <div class="yn-item">
+            <span class="yn-q">Would recommend to a colleague</span>
+            <div class="yn-btns">
+              <button class="yn-btn yes" data-key="recommend" data-val="Yes" onclick="ynSelect(this)">Yes</button>
+              <button class="yn-btn no" data-key="recommend" data-val="No" onclick="ynSelect(this)">No</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Free text -->
+      <div class="fb-card">
+        <div class="fb-section-title">In your own words</div>
+        <label class="field-label">Best part of today</label>
+        <textarea class="fb-input fb-textarea" id="fb-best" placeholder="What stood out most…"></textarea>
+        <label class="field-label">What would you change or add?</label>
+        <textarea class="fb-input fb-textarea" id="fb-change" placeholder="Suggestions for improvement…"></textarea>
+      </div>
+
+      <!-- About you -->
+      <div class="fb-card">
+        <div class="fb-section-title">About you (optional)</div>
+        <div class="select-row">
+          <div class="select-group">
+            <label class="field-label">Role</label>
+            <select class="fb-select" id="fb-role">
+              <option value="">Select…</option>
+              <option>FY1</option>
+              <option>FY2</option>
+              <option>Medical Student</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="select-group">
+            <label class="field-label">Prior robotic experience</label>
+            <select class="fb-select" id="fb-exp">
+              <option value="">Select…</option>
+              <option>None</option>
+              <option>Observed only</option>
+              <option>Assisted before</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="submit-row">
+        <button class="btn btn-primary" onclick="submitFeedback()" style="padding:13px 40px;font-size:15px;">Submit Feedback</button>
+      </div>
+    </div>
+
+    <!-- Thank you -->
+    <div class="thankyou" id="fb-thankyou">
+      <div class="ty-icon">✦</div>
+      <div class="ty-title">Thank you</div>
+      <p class="ty-sub">Your feedback has been recorded. It will help shape future ROBO-READY courses.</p>
+      <button class="btn btn-outline" style="margin-top:1.5rem;" onclick="showView('home')">← Back to home</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ DASHBOARD ═══════════════════════ -->
+<div class="view" id="view-dashboard">
+  <header class="site-header">
+    <div class="brand" onclick="showView('home')"><div class="brand-dot"></div>ROBO-READY</div>
+    <nav class="nav-links">
+      <button class="nav-btn" onclick="showView('home')">← Home</button>
+      <button class="nav-btn btn-outline" onclick="dashLogout()" style="color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2);">Logout</button>
+    </nav>
+  </header>
+
+  <!-- Login overlay -->
+  <div id="dash-login" class="login-wrap">
+    <div class="login-card">
+      <h2>Admin Dashboard</h2>
+      <p>ROBO-READY · Course Management</p>
+      <div class="login-error" id="login-error">Incorrect password. Try again.</div>
+      <input type="password" id="dash-pw" placeholder="Password" onkeydown="if(event.key==='Enter')dashLogin()" />
+      <button class="btn btn-primary" style="width:100%;" onclick="dashLogin()">Sign in</button>
+    </div>
+  </div>
+
+  <!-- Dashboard body -->
+  <div id="dash-content" style="display:none;">
+    <div class="dash-body">
+      <div class="dash-inner">
+
+        <div class="dash-top">
+          <h2>Participant Overview</h2>
+          <div class="dash-actions">
+            <span class="refresh-note" id="dash-refresh-note">Auto-refreshes every 60s</span>
+            <button class="btn btn-outline" onclick="renderDash()" style="font-size:13px;padding:7px 14px;">↺ Refresh</button>
+            <button class="btn btn-primary" onclick="exportCSV()" style="font-size:13px;padding:7px 14px;">⬇ Export CSV</button>
+          </div>
+        </div>
+
+        <div class="stats-row">
+          <div class="stat-tile"><div class="n" id="d-total">—</div><div class="l">Total participants</div></div>
+          <div class="stat-tile green"><div class="n" id="d-assessed">—</div><div class="l">Assessment done</div></div>
+          <div class="stat-tile green"><div class="n" id="d-feedback">—</div><div class="l">Feedback submitted</div></div>
+          <div class="stat-tile"><div class="n" id="d-both">—</div><div class="l">Both complete</div></div>
+          <div class="stat-tile gold"><div class="n" id="d-certs">—</div><div class="l">Certificates issued</div></div>
+        </div>
+
+        <!-- Certificate Template Panel -->
+        <div class="template-card">
+          <div class="template-header" id="tmpl-header" onclick="toggleTemplate()">
+            <div class="template-header-left">
+              <div class="template-icon">🏆</div>
+              <div>
+                <div class="template-title">Certificate Template</div>
+                <div class="template-subtitle">Configure the certificate design issued to participants</div>
+              </div>
+            </div>
+            <span class="template-chevron" id="tmpl-chevron">▼</span>
+          </div>
+          <div class="template-body" id="tmpl-body">
+            <div class="template-placeholder">
+              <div class="big">📜</div>
+              <h4>Template not yet configured</h4>
+              <p>Your certificate design will appear here. When you're ready, you can add a logo, layout, and signature.</p>
+            </div>
+            <div class="template-hint">
+              ✦ <strong>Coming soon</strong> — Add your certificate design here later. When issued, the participant's name, date, and score are filled in automatically. The certificate downloads as a file and can be emailed directly to the participant in one click.
+            </div>
+          </div>
+        </div>
+
+        <div class="search-bar">
+          <input type="text" id="dash-search" placeholder="Search by name or email…" oninput="renderTable()" />
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Assessment</th>
+                <th>Score</th>
+                <th>Pass/Fail</th>
+                <th>Feedback</th>
+                <th>Status</th>
+                <th>Issue Certificate</th>
+                <th>Manage</th>
+              </tr>
+            </thead>
+            <tbody id="dash-table-body"></tbody>
+          </table>
+          <div class="empty-state" id="dash-empty" style="display:none;">No participants yet. Responses will appear here as forms are submitted.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ CERTIFICATE MODAL ═══════════ -->
+<div class="modal-overlay" id="cert-modal" onclick="closeCertModal(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✦ Issue Certificate</h3>
+      <button class="modal-close" onclick="closeCertModalDirect()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Participant info strip -->
+      <div class="cert-participant-info" id="cert-info-strip">
+        <div class="cert-info-row"><span class="k">Participant</span><span class="v" id="ci-name">—</span></div>
+        <div class="cert-info-row"><span class="k">Email</span><span class="v" id="ci-email">—</span></div>
+        <div class="cert-info-row"><span class="k">Score</span><span class="v" id="ci-score">—</span></div>
+        <div class="cert-info-row"><span class="k">Date of issue</span><span class="v" id="ci-date">—</span></div>
+      </div>
+
+      <!-- Certificate preview -->
+      <div class="cert-preview" id="cert-preview-box">
+        <div class="cert-preview-inner" id="cert-preview-inner">
+          <div class="cert-blank-msg">
+            <div class="icon">📜</div>
+            <h4>Certificate template not yet added</h4>
+            <p>Your custom certificate design will appear here once configured in the Certificate Template panel above. You can still issue and email a placeholder certificate now.</p>
+          </div>
+        </div>
+      </div>
+
+      <p style="font-size:12px;color:var(--muted);text-align:center;margin-top:-.25rem;">
+        Clicking <strong>Issue &amp; Email</strong> will mark this certificate as issued, download it, and open your email client with the participant's address pre-filled.
+      </p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeCertModalDirect()">Cancel</button>
+      <button class="btn" style="background:#f3f4f6;color:var(--text);font-size:14px;" onclick="downloadCertOnly()">⬇ Download only</button>
+      <button class="btn btn-primary" onclick="issueAndEmail()" style="background:var(--gold);font-size:14px;">✉ Issue &amp; Email participant</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════════════════════
+//  DATA LAYER — localStorage
+// ════════════════════════════════════════════════
+const STORE_KEY = 'roboready_v1';
+
+function getData() {
+  try { return JSON.parse(localStorage.getItem(STORE_KEY)) || { participants: [] }; }
+  catch { return { participants: [] }; }
+}
+
+function saveData(d) { localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+
+function upsertParticipant(email, name, updates) {
+  const d = getData();
+  let p = d.participants.find(x => x.email === email);
+  if (!p) {
+    p = { name, email, assessmentDone: false, assessmentScore: null, assessmentPassed: null, feedbackDone: false, certificateApproved: false, timestamp: new Date().toISOString() };
+    d.participants.push(p);
+  }
+  Object.assign(p, updates);
+  saveData(d);
+}
+
+// ════════════════════════════════════════════════
+//  NAVIGATION
+// ════════════════════════════════════════════════
+function showView(v) {
+  document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+  document.getElementById('view-' + v).classList.add('active');
+  window.scrollTo(0, 0);
+  if (v === 'home') updateHomeStats();
+}
+
+function updateHomeStats() {
+  const d = getData();
+  const ps = d.participants;
+  document.getElementById('stat-total').textContent  = ps.length;
+  document.getElementById('stat-assess').textContent = ps.filter(p => p.assessmentDone).length;
+  document.getElementById('stat-fb').textContent     = ps.filter(p => p.feedbackDone).length;
+  document.getElementById('stat-cert').textContent   = ps.filter(p => p.certificateApproved).length;
+}
+
+// ════════════════════════════════════════════════
+//  ASSESSMENT
+// ════════════════════════════════════════════════
+const QUESTIONS = [
+  {
+    q: 'When the surgical robot is docked to the patient, who holds primary responsibility for ensuring instruments do not move unexpectedly at the bedside?',
+    opts: ['The console surgeon', 'The scrub nurse', 'The bedside assistant', 'The anaesthetist'],
+    correct: 2,
+    explanation: 'The bedside assistant is responsible for monitoring and controlling instrument movement at the patient side when the robot is docked.'
+  },
+  {
+    q: 'What is the FIRST action a bedside assistant must take if the patient requires immediate open conversion during a robotic procedure?',
+    opts: ['Inform the scrub nurse', 'Activate the emergency undock function and stand clear', 'Call for the consultant', 'Switch off the robotic system'],
+    correct: 1,
+    explanation: 'Emergency undocking must be performed immediately to allow rapid conversion. The bedside assistant is trained to activate this without waiting for instruction.'
+  },
+  {
+    q: 'Which of the following correctly describes the safe zone for the bedside assistant\'s hands during robotic instrument exchanges?',
+    opts: ['Within the sterile drape at all times', 'Outside the range of instrument motion, hands visible to the surgeon', 'Adjacent to the trocar being exchanged only', 'Resting on the robotic arm for stability'],
+    correct: 1,
+    explanation: 'Hands must remain outside instrument motion range and visible, preventing inadvertent patient injury during instrument movement.'
+  },
+  {
+    q: 'A monopolar energy instrument is being used laparoscopically via the robot. What specific risk must the bedside assistant monitor for at the trocar site?',
+    opts: ['Excessive CO2 insufflation', 'Capacitive coupling causing burns at the trocar', 'Loss of pneumoperitoneum', 'Camera fogging'],
+    correct: 1,
+    explanation: 'Capacitive coupling can transmit stray electrical current to adjacent tissue via metal trocars, causing unrecognised burns — a key hazard with monopolar instruments.'
+  },
+  {
+    q: 'During robot docking, the bedside assistant notices a robotic arm is colliding with the anaesthetic screen. What should happen?',
+    opts: ['Continue docking and adjust post-operatively', 'Pause docking immediately and reposition the arm or cart', 'Alert the scrub nurse to move the screen', 'Accept the position if the target anatomy is reached'],
+    correct: 1,
+    explanation: 'Arm collisions during docking must be resolved before proceeding. Forcing the arm risks patient injury and equipment damage.'
+  },
+  {
+    q: 'What is the correct technique when inserting a robotic instrument through a trocar under laparoscopic vision?',
+    opts: ['Advance the instrument rapidly to minimise air exposure', 'Advance slowly with tip visualised on camera throughout', 'Advance only when the console surgeon confirms readiness', 'Insert with the instrument fully deployed'],
+    correct: 1,
+    explanation: 'Instruments must be advanced slowly with continuous laparoscopic vision to avoid inadvertent visceral injury during insertion.'
+  },
+  {
+    q: 'Which colour-coded port typically denotes the 12 mm assistant port in the da Vinci Si/Xi system?',
+    opts: ['Blue', 'Yellow', 'Green', 'White'],
+    correct: 0,
+    explanation: 'Blue trocars typically designate the 12 mm port used for the assistant\'s instrument or stapler in standard robotic setups.'
+  },
+  {
+    q: 'A suture needle is dropped and falls onto the drapes during a robotic procedure. What is the correct action?',
+    opts: ['Retrieve it immediately to keep the count correct', 'Inform the scrub nurse, secure and count the needle before proceeding', 'Discard it off the field and request a replacement', 'Leave it until the end of the procedure'],
+    correct: 1,
+    explanation: 'All sharps must be accounted for immediately. The scrub nurse must be informed, the needle secured and counted before the procedure continues.'
+  },
+  {
+    q: 'In the event of a power failure during a docked robotic case, what is the immediate priority for the bedside assistant?',
+    opts: ['Restart the robotic system', 'Manually disengage the clutch and hold the arms static', 'Call the biomedical engineering team', 'Switch to a handheld laparoscope'],
+    correct: 1,
+    explanation: 'On power failure the robotic arms must be manually clutched and held static to prevent drift onto the patient while the team assesses the situation.'
+  },
+  {
+    q: 'Which statement best describes the bedside assistant\'s communication responsibility during a robotic procedure?',
+    opts: ['Communicate only when directly addressed by the surgeon', 'Maintain closed-loop communication, proactively reporting any concerns', 'Relay all communications through the scrub nurse', 'Remain silent to avoid distracting the console surgeon'],
+    correct: 1,
+    explanation: 'Closed-loop communication — where messages are confirmed back — is an essential patient safety practice. The bedside assistant must proactively speak up when patient safety is at risk.'
+  }
+];
+
+let currentQ = 0;
+let answers = new Array(10).fill(null);
+let timerInterval = null;
+let timeLeft = 600;
+let assessName = '', assessEmail = '';
+let quizStartTime = null;
+
+function startAssessment() {
+  assessName  = document.getElementById('assess-name').value.trim();
+  assessEmail = document.getElementById('assess-email').value.trim();
+  if (!assessName || !assessEmail) { showToast('Please enter your name and email.'); return; }
+  if (!assessEmail.includes('@')) { showToast('Please enter a valid email address.'); return; }
+
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  currentQ = 0;
+  answers = new Array(10).fill(null);
+  timeLeft = 600;
+  quizStartTime = Date.now();
+  renderQuestion();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    timeLeft--;
+    const m = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+    const s = (timeLeft % 60).toString().padStart(2,'0');
+    const el = document.getElementById('timer-display');
+    el.textContent = m + ':' + s;
+    el.className = 'timer' + (timeLeft < 120 ? ' warn' : '');
+    if (timeLeft <= 0) { clearInterval(timerInterval); submitAssessment(); }
+  }, 1000);
+}
+
+function renderQuestion() {
+  const q = QUESTIONS[currentQ];
+  document.getElementById('q-current').textContent = currentQ + 1;
+  document.getElementById('q-progress').style.width = ((currentQ + 1) / 10 * 100) + '%';
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('btn-prev').disabled = currentQ === 0;
+
+  const isLast = currentQ === QUESTIONS.length - 1;
+  const btnNext = document.getElementById('btn-next');
+  btnNext.textContent = isLast ? 'Submit Assessment' : 'Next →';
+  btnNext.onclick = isLast ? submitAssessment : nextQ;
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  const letters = ['A','B','C','D'];
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option' + (answers[currentQ] === i ? ' selected' : '');
+    div.innerHTML = `<span class="option-letter">${letters[i]}</span><span>${opt}</span>`;
+    div.onclick = () => selectOption(i);
+    list.appendChild(div);
+  });
+}
+
+function selectOption(i) {
+  answers[currentQ] = i;
+  renderQuestion();
+}
+
+function prevQ() { if (currentQ > 0) { currentQ--; renderQuestion(); } }
+function nextQ()  { if (currentQ < 9) { currentQ++; renderQuestion(); } }
+
+function submitAssessment() {
+  clearInterval(timerInterval);
+  const score = answers.reduce((s, a, i) => s + (a === QUESTIONS[i].correct ? 1 : 0), 0);
+  const pct   = Math.round(score / 10 * 100);
+  const passed = pct >= 80;
+  const timeTaken = Math.round((Date.now() - quizStartTime) / 1000);
+
+  // Save to storage
+  upsertParticipant(assessEmail, assessName, {
+    name: assessName,
+    assessmentDone: true,
+    assessmentScore: score,
+    assessmentPassed: passed,
+    assessmentTimestamp: new Date().toISOString()
+  });
+
+  // Show results
+  document.getElementById('quiz-screen').style.display = 'none';
+  const res = document.getElementById('results-screen');
+  res.style.display = 'block';
+
+  const ring = document.getElementById('score-ring');
+  ring.className = 'score-ring ' + (passed ? 'pass' : 'fail');
+  document.getElementById('score-display').textContent = score;
+
+  const badge = document.getElementById('result-badge');
+  badge.className = 'result-badge ' + (passed ? 'pass' : 'fail');
+  badge.textContent = passed ? '✓ PASSED' : '✗ NOT PASSED';
+
+  document.getElementById('result-msg').textContent = passed
+    ? `Congratulations ${assessName}! You scored ${pct}% and have passed the safety assessment.`
+    : `You scored ${pct}%. A score of 80% or above is required. Please review and retake.`;
+
+  // Review
+  const rev = document.getElementById('review-list');
+  rev.innerHTML = '<div style="text-align:center;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;margin:1.5rem 0 1rem;">✦ Answer Review ✦</div>';
+  QUESTIONS.forEach((q, i) => {
+    const userAns = answers[i];
+    const correct = q.correct;
+    const isCorrect = userAns === correct;
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="q">${i+1}. ${q.q}</div>
+      <div class="review-sep"></div>
+      ${!isCorrect && userAns !== null ? `<div class="given">Your answer: ${q.opts[userAns]}</div>` : ''}
+      ${!isCorrect ? `<div class="correct-ans">✓ Correct: ${q.opts[correct]}</div>` : `<div class="correct-ans">✓ Correct: ${q.opts[correct]}</div>`}
+      <div style="font-size:12px;color:var(--muted);margin-top:4px;">${q.explanation}</div>
+    `;
+    div.style.borderColor = isCorrect ? 'var(--teal)' : 'var(--red)';
+    rev.appendChild(div);
+  });
+}
+
+function retakeAssessment() {
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('start-screen').style.display = 'block';
+}
+
+// ════════════════════════════════════════════════
+//  FEEDBACK
+// ════════════════════════════════════════════════
+const STAR_QUESTIONS = [
+  { key: 'q1', label: 'Overall content quality' },
+  { key: 'q2', label: 'Hands-on time at the console' },
+  { key: 'q3', label: 'Faculty teaching & support' },
+  { key: 'q4', label: 'Venue & facilities' },
+  { key: 'q5', label: 'Overall course experience' },
+];
+const starRatings = { q1:0, q2:0, q3:0, q4:0, q5:0 };
+const ynValues    = { objectives: null, pacing: null, recommend: null };
+
+function initStars() {
+  const section = document.getElementById('star-section');
+  section.innerHTML = '';
+  STAR_QUESTIONS.forEach(({ key, label }) => {
+    const row = document.createElement('div');
+    row.className = 'star-item';
+    row.innerHTML = `
+      <span class="star-q">${label}</span>
+      <div class="stars" id="stars-${key}">
+        ${[1,2,3,4,5].map(n =>
+          `<button class="star" data-key="${key}" data-val="${n}" onclick="setStar('${key}',${n})">★</button>`
+        ).join('')}
+      </div>`;
+    section.appendChild(row);
+  });
+}
+
+function setStar(key, val) {
+  starRatings[key] = val;
+  const stars = document.querySelectorAll(`#stars-${key} .star`);
+  stars.forEach(s => {
+    s.classList.toggle('active', parseInt(s.dataset.val) <= val);
+  });
+}
+
+function ynSelect(btn) {
+  const key = btn.dataset.key;
+  const val = btn.dataset.val;
+  ynValues[key] = val;
+  btn.closest('.yn-btns').querySelectorAll('.yn-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function submitFeedback() {
+  const name  = document.getElementById('fb-name').value.trim();
+  const email = document.getElementById('fb-email').value.trim();
+  if (!name || !email) { showToast('Please enter your name and email.'); return; }
+  if (!email.includes('@')) { showToast('Please enter a valid email.'); return; }
+
+  upsertParticipant(email, name, {
+    name,
+    feedbackDone: true,
+    feedbackData: {
+      ...starRatings,
+      ...ynValues,
+      bestPart: document.getElementById('fb-best').value,
+      changeAdd: document.getElementById('fb-change').value,
+      role: document.getElementById('fb-role').value,
+      experience: document.getElementById('fb-exp').value,
+    },
+    feedbackTimestamp: new Date().toISOString()
+  });
+
+  document.getElementById('fb-form-wrap').style.display = 'none';
+  document.getElementById('fb-thankyou').style.display = 'block';
+}
+
+// ════════════════════════════════════════════════
+//  DASHBOARD
+// ════════════════════════════════════════════════
+const DASH_PASSWORD = 'roboready2026';
+let dashLoggedIn = false;
+
+function showDashboard() {
+  showView('dashboard');
+  if (!dashLoggedIn) {
+    document.getElementById('dash-login').style.display  = 'flex';
+    document.getElementById('dash-content').style.display = 'none';
+  } else {
+    renderDash();
+  }
+}
+
+function dashLogin() {
+  const pw = document.getElementById('dash-pw').value;
+  if (pw === DASH_PASSWORD) {
+    dashLoggedIn = true;
+    document.getElementById('dash-login').style.display  = 'none';
+    document.getElementById('dash-content').style.display = 'block';
+    renderDash();
+    setInterval(renderDash, 60000);
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('dash-pw').value = '';
+  }
+}
+
+function dashLogout() {
+  dashLoggedIn = false;
+  showView('home');
+}
+
+function renderDash() {
+  const d  = getData();
+  const ps = d.participants;
+
+  document.getElementById('d-total').textContent    = ps.length;
+  document.getElementById('d-assessed').textContent = ps.filter(p => p.assessmentDone).length;
+  document.getElementById('d-feedback').textContent = ps.filter(p => p.feedbackDone).length;
+  document.getElementById('d-both').textContent     = ps.filter(p => p.assessmentDone && p.feedbackDone).length;
+  document.getElementById('d-certs').textContent    = ps.filter(p => p.certificateApproved).length;
+
+  renderTable();
+}
+
+function renderTable() {
+  const d      = getData();
+  let   ps     = d.participants;
+  const search = document.getElementById('dash-search').value.toLowerCase();
+
+  if (search) ps = ps.filter(p =>
+    p.name.toLowerCase().includes(search) || p.email.toLowerCase().includes(search)
+  );
+
+  const body  = document.getElementById('dash-table-body');
+  const empty = document.getElementById('dash-empty');
+
+  if (ps.length === 0) {
+    body.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  body.innerHTML = ps.map(p => {
+    const bothDone   = p.assessmentDone && p.feedbackDone;
+    const canApprove = bothDone && p.assessmentPassed && !p.certificateApproved;
+    const approved   = p.certificateApproved;
+
+    const statusBadge = approved
+      ? '<span class="badge cert">✦ Approved</span>'
+      : '<span class="badge pending">Pending</span>';
+
+    const issueBtn = approved
+      ? `<button class="action-btn issue" onclick="openCertModal('${esc(p.email)}')">✦ Issue Certificate</button>`
+      : canApprove
+        ? `<button class="action-btn approve" onclick="approveAndIssue('${esc(p.email)}')">✓ Approve &amp; Issue</button>`
+        : `<span style="font-size:12px;color:var(--muted);">${!bothDone ? 'Incomplete' : !p.assessmentPassed ? 'Did not pass' : '—'}</span>`;
+
+    const manageBtn = approved
+      ? `<button class="action-btn revoke" onclick="revokeCert('${esc(p.email)}')">✗ Revoke</button>`
+      : '';
+
+    return `<tr>
+      <td><strong>${esc(p.name)}</strong></td>
+      <td style="color:var(--muted);font-size:12px;">${esc(p.email)}</td>
+      <td>${p.assessmentDone ? '<span class="badge done">✓ Done</span>' : '<span class="badge pending">Pending</span>'}</td>
+      <td>${p.assessmentDone ? `<strong>${p.assessmentScore}/10</strong> <span style="font-size:11px;color:var(--muted)">(${Math.round(p.assessmentScore/10*100)}%)</span>` : '—'}</td>
+      <td>${p.assessmentDone ? (p.assessmentPassed ? '<span class="badge pass">Pass</span>' : '<span class="badge fail">Fail</span>') : '—'}</td>
+      <td>${p.feedbackDone ? '<span class="badge done">✓ Done</span>' : '<span class="badge pending">Pending</span>'}</td>
+      <td>${statusBadge}</td>
+      <td style="white-space:nowrap;">${issueBtn}</td>
+      <td style="white-space:nowrap;">${manageBtn}</td>
+    </tr>`;
+  }).join('');
+}
+
+function approveCert(email) {
+  const d = getData();
+  const p = d.participants.find(x => x.email === email);
+  if (p) { p.certificateApproved = true; saveData(d); renderDash(); showToast('Certificate approved for ' + p.name); }
+}
+
+function approveAndIssue(email) {
+  const d = getData();
+  const p = d.participants.find(x => x.email === email);
+  if (p) {
+    p.certificateApproved = true;
+    saveData(d);
+    renderDash();
+    openCertModal(email);
+  }
+}
+
+function revokeCert(email) {
+  if (!confirm('Revoke certificate for ' + email + '?')) return;
+  const d = getData();
+  const p = d.participants.find(x => x.email === email);
+  if (p) { p.certificateApproved = false; saveData(d); renderDash(); showToast('Certificate revoked.'); }
+}
+
+// ════════════════════════════════════════════════
+//  CERTIFICATE MODAL
+// ════════════════════════════════════════════════
+let activeCertEmail = null;
+
+function openCertModal(email) {
+  const d = getData();
+  const p = d.participants.find(x => x.email === email);
+  if (!p) return;
+  activeCertEmail = email;
+
+  const issueDate = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  document.getElementById('ci-name').textContent  = p.name;
+  document.getElementById('ci-email').textContent = p.email;
+  document.getElementById('ci-score').textContent = p.assessmentScore + '/10 (' + Math.round(p.assessmentScore/10*100) + '%)';
+  document.getElementById('ci-date').textContent  = issueDate;
+
+  document.getElementById('cert-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeCertModal(e) {
+  if (e.target === document.getElementById('cert-modal')) closeCertModalDirect();
+}
+function closeCertModalDirect() {
+  document.getElementById('cert-modal').classList.remove('open');
+  document.body.style.overflow = '';
+  activeCertEmail = null;
+}
+
+function generateCertHTML(p) {
+  const issueDate = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  // Blank template placeholder — replace the inner section with your design
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ROBO-READY Certificate – ${p.name}</title>
+<style>
+  body { margin: 0; padding: 0; font-family: Georgia, serif; background: #fff; }
+  .page {
+    width: 842px; height: 595px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    border: 6px solid #0a1628;
+    margin: 20px auto;
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    background: #fff;
+  }
+  .watermark {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9rem; opacity: .03; pointer-events: none;
+    font-family: Georgia, serif; letter-spacing: .3em;
+  }
+  .course { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: #6b7280; margin-bottom: 1.5rem; }
+  .title { font-size: 2.8rem; font-weight: normal; color: #0a1628; letter-spacing: .08em; margin-bottom: .5rem; }
+  .subtitle { font-size: 12px; letter-spacing: .12em; color: #9ca3af; text-transform: uppercase; margin-bottom: 2.5rem; }
+  .presented { font-size: 13px; color: #6b7280; margin-bottom: .75rem; }
+  .recipient { font-size: 2rem; font-style: italic; color: #0a1628; border-bottom: 1px solid #e5e7eb; padding-bottom: .75rem; margin-bottom: 2rem; display: inline-block; min-width: 300px; }
+  .body-text { font-size: 13px; color: #374151; line-height: 1.8; max-width: 460px; margin: 0 auto 2rem; }
+  .meta { display: flex; justify-content: space-around; width: 100%; margin-top: 1rem; }
+  .meta-item { text-align: center; }
+  .meta-item .val { font-size: 13px; font-weight: 600; color: #0a1628; border-top: 1px solid #e5e7eb; padding-top: .5rem; min-width: 140px; }
+  .meta-item .lbl { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: .1em; margin-top: 3px; }
+  .gold { color: #c9922a; }
+
+  /* ─── YOUR CERTIFICATE TEMPLATE GOES HERE ───
+     Replace the content inside .page with your
+     custom design, logo, signature, etc.
+     The variables below are always populated:
+       Recipient name : ${p.name}
+       Score          : ${p.assessmentScore}/10
+       Date           : ${issueDate}
+     ─────────────────────────────────────────── */
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="watermark">✦</div>
+  <div class="course">Portsmouth Hospitals University NHS Trust</div>
+  <div class="title">ROBO-READY</div>
+  <div class="subtitle">Foundation Robotic Bedside Assistant Course</div>
+  <div class="presented">This is to certify that</div>
+  <div class="recipient">${p.name}</div>
+  <div class="body-text">
+    has successfully completed the post-course safety assessment and fulfilled all requirements of the
+    <strong>Foundation Robotic Bedside Assistant Course</strong>,
+    demonstrating competency in robotic surgical safety principles.
+  </div>
+  <div class="meta">
+    <div class="meta-item">
+      <div class="val">${p.assessmentScore}/10 &nbsp;<span class="gold">✓</span></div>
+      <div class="lbl">Assessment score</div>
+    </div>
+    <div class="meta-item">
+      <div class="val">${issueDate}</div>
+      <div class="lbl">Date of issue</div>
+    </div>
+    <div class="meta-item">
+      <div class="val">22 April 2026</div>
+      <div class="lbl">Course date</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>`;
+}
+
+function downloadCertOnly() {
+  const d = getData();
+  const p = d.participants.find(x => x.email === activeCertEmail);
+  if (!p) return;
+  const html = generateCertHTML(p);
+  const blob = new Blob([html], { type: 'text/html' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'RoboReady-Certificate-' + p.name.replace(/\s+/g,'-') + '.html';
+  a.click();
+  showToast('Certificate downloaded.');
+}
+
+function issueAndEmail() {
+  const d = getData();
+  const p = d.participants.find(x => x.email === activeCertEmail);
+  if (!p) return;
+
+  // Download certificate
+  const html = generateCertHTML(p);
+  const blob = new Blob([html], { type: 'text/html' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = 'RoboReady-Certificate-' + p.name.replace(/\s+/g,'-') + '.html';
+  a.click();
+
+  // Mark issued
+  p.certificateIssued     = true;
+  p.certificateIssuedDate = new Date().toISOString();
+  saveData(d);
+
+  // Open email client
+  const issueDate = new Date().toLocaleDateString('en-GB', { day:'numeric', month:'long', year:'numeric' });
+  const subject = encodeURIComponent('ROBO-READY · Your Certificate of Completion');
+  const body = encodeURIComponent(
+`Dear ${p.name},
+
+Congratulations on successfully completing the ROBO-READY Foundation Robotic Bedside Assistant Course.
+
+Your assessment result: ${p.assessmentScore}/10 (${Math.round(p.assessmentScore/10*100)}%)
+Date of issue: ${issueDate}
+
+Please find your certificate attached to this email.
+
+With best wishes,
+ROBO-READY Programme
+Portsmouth Hospitals University NHS Trust`
+  );
+  window.location.href = `mailto:${p.email}?subject=${subject}&body=${body}`;
+
+  closeCertModalDirect();
+  renderDash();
+  showToast('Certificate issued and email opened for ' + p.name);
+}
+
+// ════════════════════════════════════════════════
+//  TEMPLATE TOGGLE
+// ════════════════════════════════════════════════
+function toggleTemplate() {
+  const body    = document.getElementById('tmpl-body');
+  const chevron = document.getElementById('tmpl-chevron');
+  const header  = document.getElementById('tmpl-header');
+  const isOpen  = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  header.classList.toggle('open', !isOpen);
+  chevron.classList.toggle('open', !isOpen);
+}
+  const d  = getData();
+  const ps = d.participants;
+  const headers = ['Name','Email','Assessment Done','Score','Passed','Feedback Done','Certificate Approved','Timestamp'];
+  const rows = ps.map(p => [
+    p.name, p.email,
+    p.assessmentDone ? 'Yes' : 'No',
+    p.assessmentScore ?? '',
+    p.assessmentPassed === null ? '' : p.assessmentPassed ? 'Yes' : 'No',
+    p.feedbackDone ? 'Yes' : 'No',
+    p.certificateApproved ? 'Yes' : 'No',
+    p.timestamp
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+  const a   = document.createElement('a');
+  a.href    = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'roboready-participants-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ════════════════════════════════════════════════
+//  TOAST
+// ════════════════════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════
+initStars();
+updateHomeStats();
+</script>
+</body>
+</html>
